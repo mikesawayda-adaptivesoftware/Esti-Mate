@@ -1,0 +1,33 @@
+<!-- Fireworks container -->
+<div id="fireworks-container" class="fireworks-container"></div>
+
+<!-- Celebration banner -->
+@if (showBanner && consensusValue) {
+  <div class="celebration-overlay" [class.active]="isActive">
+    <div class="celebration-content">
+      <div class="celebration-burst">
+        <span class="burst-emoji">🎉</span>
+        <span class="burst-emoji">✨</span>
+        <span class="burst-emoji">🎊</span>
+      </div>
+      
+      <h2 class="celebration-title">CONSENSUS!</h2>
+      
+      <div class="consensus-value-container">
+        <div class="consensus-value">
+          <span class="value-number">{{ consensusValue }}</span>
+        </div>
+        <div class="value-glow"></div>
+      </div>
+      
+      <p class="celebration-subtitle">The team agrees! 🏆</p>
+      
+      <div class="celebration-particles">
+        @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+          <div class="particle" [style.--i]="i"></div>
+        }
+      </div>
+    </div>
+  </div>
+}
+

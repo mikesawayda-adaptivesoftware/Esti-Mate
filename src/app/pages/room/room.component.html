@@ -1,0 +1,214 @@
+<!-- Join Modal -->
+@if (showJoinModal()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h2>Join Room</h2>
+      <p class="modal-subtitle">Enter your name to join the planning session</p>
+      
+      <div class="input-group">
+        <label for="joinName">Your Name</label>
+        <input
+          id="joinName"
+          type="text"
+          [value]="userName()"
+          (input)="updateUserName($event)"
+          placeholder="Enter your name"
+          maxlength="30"
+          (keyup.enter)="joinRoom()"
+          autofocus
+        />
+      </div>
+      
+      <button 
+        class="btn btn-primary"
+        (click)="joinRoom()"
+        [disabled]="!userName().trim()"
+      >
+        Join Session
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Main Room Content -->
+@if (room(); as currentRoom) {
+  <div class="room-container">
+    <!-- Header -->
+    <header class="room-header">
+      <div class="header-left">
+        <button class="btn btn-icon" (click)="leaveRoom()" title="Leave room">
+          <span>←</span>
+        </button>
+        <div class="room-info">
+          <h1>Esti-Mate</h1>
+          <div class="room-code">
+            <span class="code-label">Room:</span>
+            <span class="code-value">{{ currentRoom.code }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <button 
+          class="btn btn-secondary btn-share"
+          (click)="copyRoomLink()"
+          [class.success]="copySuccess()"
+        >
+          @if (copySuccess()) {
+            <span class="btn-icon">✓</span>
+            Copied!
+          } @else {
+            <span class="btn-icon">🔗</span>
+            Share
+          }
+        </button>
+      </div>
+    </header>
+
+    <!-- Topic Section -->
+    <section class="topic-section">
+      <div class="topic-input-wrapper">
+        <input
+          type="text"
+          class="topic-input"
+          placeholder="What are we estimating? (e.g., User story title)"
+          [value]="topicInput()"
+          (input)="updateTopicInput($event)"
+          (blur)="updateTopic()"
+          (keyup.enter)="updateTopic()"
+        />
+      </div>
+    </section>
+
+    <!-- Participants Section -->
+    <section class="participants-section">
+      <div class="section-header">
+        <h2>
+          <span class="section-icon">👥</span>
+          Participants
+          <span class="count-badge">{{ participantCount() }}</span>
+        </h2>
+        <div class="vote-progress">
+          <span class="progress-text">{{ votedCount() }} / {{ participantCount() }} voted</span>
+          <div class="progress-bar">
+            <div 
+              class="progress-fill"
+              [style.width.%]="participantCount() > 0 ? (votedCount() / participantCount()) * 100 : 0"
+            ></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="participants-grid">
+        @for (participant of participants(); track participant.odId) {
+          <app-participant-card
+            [participant]="participant"
+            [revealed]="currentRoom.revealed"
+            [isCurrentUser]="isCurrentUser(participant.odId)"
+          />
+        }
+        
+        @if (participants().length === 0) {
+          <div class="empty-state">
+            <span class="empty-icon">👋</span>
+            <p>Waiting for participants to join...</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Results Section (when revealed) -->
+    @if (currentRoom.revealed && participants().length > 0) {
+      <section class="results-section">
+        <div class="results-card">
+          <div class="result-item">
+            <span class="result-label">Average</span>
+            <span class="result-value">{{ getVoteAverage() }}</span>
+          </div>
+          @if (hasConsensus()) {
+            <div class="result-item consensus">
+              <span class="result-label">Consensus!</span>
+              <span class="result-value">{{ consensusValue() }}</span>
+              <span class="consensus-badge">🎯</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Voting Cards Section -->
+    <section class="voting-section">
+      <div class="section-header">
+        <h2>
+          <span class="section-icon">🎴</span>
+          Your Vote
+        </h2>
+      </div>
+      
+      <div class="voting-cards">
+        @for (value of fibonacciValues; track value) {
+          <app-voting-card
+            [value]="value"
+            [isSelected]="currentVote() === value"
+            [disabled]="currentRoom.revealed"
+            (selected)="selectCard($event)"
+          />
+        }
+      </div>
+    </section>
+
+    <!-- Control Buttons -->
+    <section class="controls-section">
+      @if (!currentRoom.revealed) {
+        <button 
+          class="btn btn-primary btn-large"
+          (click)="revealVotes()"
+          [disabled]="isRevealing() || votedCount() === 0"
+        >
+          @if (isRevealing()) {
+            <span class="spinner"></span>
+            Revealing...
+          } @else {
+            <span class="btn-icon">👁️</span>
+            Reveal Votes
+          }
+        </button>
+      } @else {
+        <button 
+          class="btn btn-secondary btn-large"
+          (click)="resetVotes()"
+          [disabled]="isResetting()"
+        >
+          @if (isResetting()) {
+            <span class="spinner"></span>
+            Resetting...
+          } @else {
+            <span class="btn-icon">🔄</span>
+            New Round
+          }
+        </button>
+      }
+    </section>
+
+    <!-- Celebration Overlay -->
+    <app-celebration-overlay
+      [hasConsensus]="hasConsensus()"
+      [consensusValue]="consensusValue()"
+    />
+  </div>
+} @else if (isLoading()) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading room...</p>
+  </div>
+} @else {
+  <div class="error-container">
+    <span class="error-icon">😕</span>
+    <h2>Room not found</h2>
+    <p>This room may have been deleted or the link is invalid.</p>
+    <button class="btn btn-primary" routerLink="/">
+      Go Home
+    </button>
+  </div>
+}
+

@@ -1,0 +1,46 @@
+<div 
+  class="participant-card"
+  [class.voted]="participant.vote !== null"
+  [class.revealed]="revealed"
+  [class.current-user]="isCurrentUser"
+>
+  <div class="card-container">
+    <div class="card-flipper" [class.flipped]="revealed && participant.vote !== null">
+      <!-- Card Back (hidden vote) -->
+      <div class="card-face card-back">
+        <div class="card-pattern">
+          <span class="pattern-icon">🃏</span>
+        </div>
+        @if (participant.vote !== null) {
+          <div class="voted-indicator">
+            <span class="checkmark">✓</span>
+          </div>
+        }
+      </div>
+      
+      <!-- Card Front (revealed vote) -->
+      <div class="card-face card-front">
+        <span class="vote-value">{{ participant.vote || '—' }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="participant-info">
+    <span class="participant-name" [title]="participant.name">
+      {{ participant.name }}
+      @if (isCurrentUser) {
+        <span class="you-badge">(You)</span>
+      }
+    </span>
+    <span class="vote-status">
+      @if (participant.vote === null) {
+        <span class="status thinking">Thinking...</span>
+      } @else if (!revealed) {
+        <span class="status ready">Ready</span>
+      } @else {
+        <span class="status voted">{{ participant.vote }}</span>
+      }
+    </span>
+  </div>
+</div>
+

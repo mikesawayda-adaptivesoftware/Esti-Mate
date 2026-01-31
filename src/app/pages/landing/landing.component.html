@@ -1,0 +1,108 @@
+<div class="landing-container">
+  <div class="card-stack">
+    <div class="decorative-card card-1"></div>
+    <div class="decorative-card card-2"></div>
+    <div class="decorative-card card-3"></div>
+  </div>
+  
+  <div class="landing-content">
+    <div class="logo-section">
+      <div class="logo">
+        <span class="logo-icon">🃏</span>
+        <h1>Esti-Mate</h1>
+      </div>
+      <p class="tagline">Planning Poker for Agile Teams</p>
+    </div>
+
+    <div class="form-card">
+      <div class="input-group">
+        <label for="userName">Your Name</label>
+        <input
+          id="userName"
+          type="text"
+          [value]="userName()"
+          (input)="updateName($event)"
+          placeholder="Enter your name"
+          maxlength="30"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="divider">
+        <span>then</span>
+      </div>
+
+      <div class="action-buttons">
+        <button 
+          class="btn btn-primary btn-create"
+          (click)="createRoom()"
+          [disabled]="isCreating() || isJoining()"
+        >
+          @if (isCreating()) {
+            <span class="spinner"></span>
+            Creating...
+          } @else {
+            <span class="btn-icon">✨</span>
+            Create New Room
+          }
+        </button>
+
+        <div class="or-divider">
+          <span>or</span>
+        </div>
+
+        <div class="join-section">
+          <div class="input-group">
+            <label for="roomCode">Room Code</label>
+            <input
+              id="roomCode"
+              type="text"
+              [value]="roomCode()"
+              (input)="updateRoomCode($event)"
+              placeholder="Enter 6-digit code"
+              maxlength="6"
+              autocomplete="off"
+              class="room-code-input"
+            />
+          </div>
+          <button 
+            class="btn btn-secondary btn-join"
+            (click)="joinRoom()"
+            [disabled]="isCreating() || isJoining()"
+          >
+            @if (isJoining()) {
+              <span class="spinner"></span>
+              Joining...
+            } @else {
+              <span class="btn-icon">🚀</span>
+              Join Room
+            }
+          </button>
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-message">
+          <span class="error-icon">⚠️</span>
+          {{ errorMessage() }}
+        </div>
+      }
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">👥</span>
+        <span>Real-time collaboration</span>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🎯</span>
+        <span>Fibonacci estimation</span>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🎉</span>
+        <span>Consensus celebrations</span>
+      </div>
+    </div>
+  </div>
+</div>
+

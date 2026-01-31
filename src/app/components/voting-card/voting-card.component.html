@@ -1,0 +1,21 @@
+<button 
+  class="voting-card"
+  [class.selected]="isSelected"
+  [class.disabled]="disabled"
+  [disabled]="disabled"
+  (click)="onClick()"
+>
+  <div class="card-inner">
+    <div class="card-front">
+      <span class="card-value">{{ value }}</span>
+      <div class="card-corner top-left">
+        <span>{{ value }}</span>
+      </div>
+      <div class="card-corner bottom-right">
+        <span>{{ value }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="card-glow"></div>
+</button>
+
