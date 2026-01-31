@@ -5,7 +5,7 @@
 
 set -e  # Exit on error
 
-GITHUB_USERNAME="msawayda"
+GITHUB_USERNAME="mikesawayda-adaptivesoftware"
 
 # Colors for output
 RED='\033[0;31m'
@@ -58,7 +58,9 @@ else
 
     # Push to GitHub
     echo -e "${BLUE}🚀 Pushing to GitHub...${NC}"
-    git push origin main
+    REPO_URL="https://github.com/mikesawayda-adaptivesoftware/Esti-Mate.git"
+    git remote add esti-mate ${REPO_URL} 2>/dev/null || git remote set-url esti-mate ${REPO_URL}
+    git push esti-mate main
     echo -e "${GREEN}✅ GitHub updated successfully!${NC}"
 fi
 echo ""
